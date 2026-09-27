@@ -1,0 +1,50 @@
+<Page
+    x:Class="EasyDisk.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <Grid Padding="28" RowSpacing="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Spacing="6">
+                <TextBlock Text="EasyDisk" FontSize="32" FontWeight="SemiBold" />
+                <TextBlock Text="磁盘占用分析 + 文件秒搜工具"
+                           FontSize="15" Opacity="0.7" />
+            </StackPanel>
+
+            <Border Grid.Row="1"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="18">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="磁盘空间" FontSize="17" FontWeight="SemiBold" />
+                    <ItemsControl x:Name="DrivesList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,6">
+                                    <Grid>
+                                        <TextBlock Text="{Binding Label}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding SpaceText}" HorizontalAlignment="Right" Opacity="0.8" />
+                                    </Grid>
+                                    <ProgressBar Value="{Binding UsedPercent}" Maximum="100" Margin="0,4,0,0" Height="6" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12">
+                <Button Content="开始磁盘分析" Click="GoDisk_Click" />
+                <Button Content="打开搜索" Click="GoSearch_Click" />
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

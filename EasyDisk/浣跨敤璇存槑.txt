@@ -1,0 +1,72 @@
+EasyDisk v1.0.0 —— WinUI 3 完整源码使用说明
+================================================
+
+一、怎么用
+1. 解压到任意空文件夹（路径不要有中文，建议 D:\EasyDisk）
+2. 用 Visual Studio 2026 打开 EasyDisk.csproj
+3. 工具栏平台选 x64
+4. Ctrl+Shift+B 生成，然后 F5 运行
+
+第一次打开会还原 NuGet 包（WindowsAppSDK），等底部状态栏进度走完再操作。
+
+
+二、最常见的两个报错，怎么改
+--------------------------------
+报错 A：找不到 Windows SDK / 找不到 .NET 8
+打开 EasyDisk.csproj，把这行：
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+改成你 EasyDownload.csproj 里 TargetFramework 那一行的完整内容
+（你那个项目已经能编译，直接照抄它那行最保险）。
+
+报错 B：Microsoft.WindowsAppSDK 版本找不到
+把 csproj 里这行：
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.*" />
+改成你 EasyDownload.csproj 里 WindowsAppSDK 那一行（照抄版本号）。
+
+
+三、启动报错"应用程序配置不正确 / 请检查清单文件"
+--------------------------------
+csproj 里这几行必须都在，一个都不能少：
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <Platforms>x64</Platforms>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+如果改过 csproj，先删掉项目目录下的 bin 和 obj 两个文件夹，再重新生成。
+
+
+四、界面说明
+--------------------------------
+左侧导航：首页 / 磁盘分析 / 搜索
+左下角：设置（用的是 NavigationView 的 FooterMenuItems + IsSettingsVisible=False）
+
+首页：显示每个磁盘的已用/可用空间进度条
+磁盘分析：选磁盘 → 点"扫描" → 按文件夹大小降序排列，双击可进入子文件夹，
+          可删除选中文件夹（默认走回收站，设置里可关）
+搜索：输文件名即搜。本机装了 Everything 并运行时，走 Everything IPC 全盘秒搜；
+      没有 Everything 就点"建立索引"，之后走自建索引搜索
+设置：深色主题开关 / 毛玻璃开关（可实时开关 Mica）/ 删除是否进回收站
+
+
+五、关于搜索速度
+--------------------------------
+Everything 官网：https://www.voidtools.com/
+建议装上并保持后台运行，搜索才是毫秒级的全盘搜索。
+不装也能用：点"建立索引"扫描桌面/文档/下载/图片四个目录，之后搜索同样很快。
+
+
+六、项目文件结构
+--------------------------------
+EasyDisk.csproj                项目文件（TFM / 包 / 自包含配置）
+App.xaml / App.xaml.cs         应用入口
+MainWindow.xaml(.cs)           主窗口 + NavigationView 导航
+Views/HomePage                 首页
+Views/DiskPage                 磁盘分析页
+Views/SearchPage               搜索页
+Views/SettingsPage             设置页
+Models/FolderItem.cs           文件夹条目（大小格式化）
+Models/SearchItem.cs           搜索结果条目
+Services/DiskScanner.cs        后台线程扫描文件夹大小
+Services/EverythingService.cs  Everything IPC（P/Invoke Everything64.dll）
+Services/IndexService.cs       自建索引（JSON 存本地）
+Services/RecycleBin.cs         删除到回收站（SHFileOperation）
+Services/SettingsService.cs    设置持久化（LocalSettings）
